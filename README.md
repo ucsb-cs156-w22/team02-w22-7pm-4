@@ -1,5 +1,8 @@
 # starter-team02: dsre-v2
 
+Coverage status: [![codecov](https://codecov.io/gh/ucsb-cs156-w22/team02-w22-7pm-4/branch/main/graph/badge.svg?token=tcbj2bCpFY)](https://codecov.io/gh/ucsb-cs156-w22/team02-w22-7pm-4)
+
+---
 Storybook is here:
 * Production: <https://ucsb-cs156-w22.github.io/team02-w22-7pm-4-docs/storybook/>
 * QA:  <https://ucsb-cs156-w22.github.io/team02-w22-7pm-4-docs-qa/storybook/>
