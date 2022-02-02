@@ -28,7 +28,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 @Api(description = "UCSBRequirement")
-@RequestMapping("/api/UCSBRequirements/all")
+@RequestMapping("/api/UCSBRequirements")
 @RestController
 @Slf4j
 public class UCSBRequirementController extends ApiController {
@@ -67,11 +67,11 @@ public class UCSBRequirementController extends ApiController {
     @ApiOperation(value = "List this user's UCSBRequirements")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/all")
-    public Iterable<Todo> thisUsersTodos() {
+    public Iterable<UCSBRequirement> thisUsersUCSBRequirement() {
         loggingService.logMethod();
         CurrentUser currentUser = getCurrentUser();
-        Iterable<Todo> todos = todoRepository.findAllByUserId(currentUser.getUser().getId());
-        return todos;
+        Iterable<UCSBRequirement> ucsbRequirements = UCSBRequirementRepository.findAllByUserId(currentUser.getUser().getId());
+        return ucsbRequirements;
     }
 
     @ApiOperation(value = "Get a single todo (if it belongs to current user)")
@@ -80,39 +80,39 @@ public class UCSBRequirementController extends ApiController {
     public ResponseEntity<String> getTodoById(
             @ApiParam("id") @RequestParam Long id) throws JsonProcessingException {
         loggingService.logMethod();
-        TodoOrError toe = new TodoOrError(id);
+        UCSBRequirementOrError uoe = new UCSBRequirementOrError(id);
 
-        toe = doesTodoExist(toe);
-        if (toe.error != null) {
-            return toe.error;
+        uoe = doesUCSBRequirementExist(uoe);
+        if (uoe.error != null) {
+            return uoe.error;
         }
-        toe = doesTodoBelongToCurrentUser(toe);
-        if (toe.error != null) {
-            return toe.error;
+        uoe = doesUCSBRequirementBelongToCurrentUser(uoe);
+        if (uoe.error != null) {
+            return uoe.error;
         }
-        String body = mapper.writeValueAsString(toe.todo);
+        String body = mapper.writeValueAsString(uoe.ucsbRequirement);
         return ResponseEntity.ok().body(body);
     }
 
     @ApiOperation(value = "Get a single todo (no matter who it belongs to, admin only)")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin")
-    public ResponseEntity<String> getTodoById_admin(
+    public ResponseEntity<String> getUCSBRequirementById_admin(
             @ApiParam("id") @RequestParam Long id) throws JsonProcessingException {
         loggingService.logMethod();
 
-        TodoOrError toe = new TodoOrError(id);
+        UCSBRequirementOrError uoe = new UCSBRequirementOrError(id);
 
-        toe = doesTodoExist(toe);
-        if (toe.error != null) {
-            return toe.error;
+        uoe = doesUCSBRequirementExist(uoe);
+        if (uoe.error != null) {
+            return uoe.error;
         }
 
-        String body = mapper.writeValueAsString(toe.todo);
+        String body = mapper.writeValueAsString(uoe.todo);
         return ResponseEntity.ok().body(body);
     }
 
-    @ApiOperation(value = "Create a new Todo")
+    @ApiOperation(value = "Create a new UCSBRequirement")
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/post")
     public Todo postTodo(
