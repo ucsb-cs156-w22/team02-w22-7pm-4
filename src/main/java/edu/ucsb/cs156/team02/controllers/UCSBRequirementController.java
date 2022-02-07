@@ -49,23 +49,23 @@ public class UCSBRequirementController extends ApiController {
         return ucsbRequirements;
     }
 
-    @ApiOperation(value = "Create a new UCSBRequirement")
+    @ApiOperation(value = "Create a new UCSBRequirement for the table")
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/post")
+    // im changing the parameters for a controller method
     public UCSBRequirement postUCSBRequirement(
-            @ApiParam("title") @RequestParam String title,
-            @ApiParam("details") @RequestParam String details,
-            @ApiParam("done") @RequestParam Boolean done) {
+            @ApiParam("id") @RequestParam long id,
+            @ApiParam("courseCount") @RequestParam int courseCount,
+            @ApiParam("units") @RequestParam int unit,
+            @ApiParam("inactive") @RequestParam boolean inactive,
+            @ApiParam("requirementCode") @RequestParam String requirementCode,
+            @ApiParam("requirementTranslation") @RequestParam String requirementTranslation,
+            @ApiParam("collegeCode") @RequestParam String collegeCode,
+            @ApiParam("objCode") @RequestParam String objCode) {
         loggingService.logMethod();
-        CurrentUser currentUser = getCurrentUser();
-        log.info("currentUser={}", currentUser);
 
-        UCSBRequirement ucsbRequirement = new UCSBRequirement();
-        ucsbRequirement.setUser(currentUser.getUser());
-        ucsbRequirement.setTitle(title);
-        ucsbRequirement.setDetails(details);
-        ucsbRequirement.setDone(done);
-        UCSBRequirement savedUCSBRequirement = ucsbRequirementRepository.save(ucsbRequirement);
+        UCSBRequirement ucsbRequirement = new UCSBRequirement(id, courseCount, unit, inactive, requirementCode, requirementTranslation, collegeCode, objCode);
+        UCSBRequirement savedUCSBRequirement = UCSBRequirementRepository.save(ucsbRequirement);
         return savedUCSBRequirement;
     }
 
