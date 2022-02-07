@@ -45,15 +45,12 @@ public class UCSBRequirementController extends ApiController {
     public Iterable<UCSBRequirement> getUCSBRequirement() {
         loggingService.logMethod();
         Iterable<UCSBRequirement> reqs = ucsbRequirementRepository.findAll();
-        //CurrentUser currentUser = getCurrentUser();
-        //Iterable<UCSBRequirement> ucsbRequirements = UCSBRequirementRepository.findAllByUserId(currentUser.getUser().getId());
         return reqs;
     }
 
     @ApiOperation(value = "Create a new UCSBRequirement for the table")
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/post")
-    // im changing the parameters for a controller method
     public UCSBRequirement postUCSBRequirement(
             @ApiParam("id") @RequestParam long id,
             @ApiParam("courseCount") @RequestParam int courseCount,
@@ -65,8 +62,17 @@ public class UCSBRequirementController extends ApiController {
             @ApiParam("objCode") @RequestParam String objCode) {
         loggingService.logMethod();
 
-        UCSBRequirement ucsbRequirement = new UCSBRequirement(id, courseCount, unit, inactive, requirementCode, requirementTranslation, collegeCode, objCode);
-        UCSBRequirement savedUCSBRequirement = ucsbRequirementRepository.save(ucsbRequirement);
+        UCSBRequirement req = new UCSBRequirement();
+        req.setId(id);
+        req.setCourseCount(courseCount);
+        req.setUnit(unit);
+        req.setInactive(inactive);
+        req.setRequirementCode(requirementCode);
+        req.setRequirementTranslation(requirementTranslation);
+        req.setCollegeCode(collegeCode);
+        req.setObjCode(objCode);
+        
+        UCSBRequirement savedUCSBRequirement = ucsbRequirementRepository.save(req);
         return savedUCSBRequirement;
     }
 
