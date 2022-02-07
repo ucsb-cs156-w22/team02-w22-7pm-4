@@ -53,8 +53,9 @@ public class CollegiateSubredditController extends ApiController{
     public CollegiateSubreddit postCollegiateSubreddit(
             @ApiParam("name") @RequestParam String name,
             @ApiParam("location") @RequestParam String location,
-            @ApiParam("subreddit") @RequestParam String subreddit,
-            @ApiParam("done") @RequestParam Boolean done) {
+            @ApiParam("subreddit") @RequestParam String subreddit)
+            //@ApiParam("done") @RequestParam Boolean done) 
+            {
         loggingService.logMethod();
         //CurrentUser currentUser = getCurrentUser();
         //log.info("currentUser={}", currentUser);

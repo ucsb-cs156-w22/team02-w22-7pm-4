@@ -29,7 +29,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@WebMvcTest(controllers = TodosController.class)
+@WebMvcTest(controllers = CollegiateSubredditController.class)
 @Import(TestConfig.class)
 public class CollegiateSubredditControllerTests extends ControllerTestCase {
 
@@ -88,6 +88,7 @@ public class CollegiateSubredditControllerTests extends ControllerTestCase {
         // assert
         verify(collegiateSubredditRepository, times(1)).save(expectedCollegiateSubreddit);
         String expectedJson = mapper.writeValueAsString(expectedCollegiateSubreddit);
+        //System.out.println("This is the expectedJson:" + expectedJson);
         String responseString = response.getResponse().getContentAsString();
         assertEquals(expectedJson, responseString);
     }
@@ -98,17 +99,17 @@ public class CollegiateSubredditControllerTests extends ControllerTestCase {
 
         // arrange
 
-        CollegiateSubreddit todo1 = CollegiateSubreddit.builder().name("Name 1").location("location 1").subreddit("subreddit 1").build();
-        CollegiateSubreddit todo2 = CollegiateSubreddit.builder().name("Name 2").location("location 2").subreddit("subreddit 2").build();
-        CollegiateSubreddit todo3 = CollegiateSubreddit.builder().name("Name 3").location("location 3").subreddit("subreddit 3").build();
+        CollegiateSubreddit cs1 = CollegiateSubreddit.builder().name("Name 1").location("location 1").subreddit("subreddit 1").build();
+        CollegiateSubreddit cs2 = CollegiateSubreddit.builder().name("Name 2").location("location 2").subreddit("subreddit 2").build();
+        CollegiateSubreddit cs3 = CollegiateSubreddit.builder().name("Name 3").location("location 3").subreddit("subreddit 3").build();
 
         ArrayList<CollegiateSubreddit> expectedCollegiateSubreddit = new ArrayList<>();
-        expectedCollegiateSubreddit.addAll(Arrays.asList(todo1, todo2, todo3));
+        expectedCollegiateSubreddit.addAll(Arrays.asList(cs1, cs2, cs3));
 
         when(collegiateSubredditRepository.findAll()).thenReturn(expectedCollegiateSubreddit);
 
         // act
-        MvcResult response = mockMvc.perform(get("/api/collegiateSubreddits/user/all"))
+        MvcResult response = mockMvc.perform(get("/api/collegiateSubreddits/all"))
                 .andExpect(status().isOk()).andReturn();
 
         // assert
