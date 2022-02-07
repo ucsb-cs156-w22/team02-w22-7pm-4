@@ -33,6 +33,5 @@ public class UCSBSubject {
     private String collegeCode;
     private String relatedDeptCode;
     private boolean inactive;
-    private boolean done;
 
 }
