@@ -10,5 +10,7 @@ import java.util.Optional;
 public interface CollegiateSubredditRepository extends CrudRepository<CollegiateSubreddit, Long> {
    Iterable<CollegiateSubreddit> findByName(String name);
    Iterable<CollegiateSubreddit> findBySubreddit(String subreddit);
+   //presumably have to add this
+   Iterable<CollegiateSubreddit> findByid(long id);
 
 }

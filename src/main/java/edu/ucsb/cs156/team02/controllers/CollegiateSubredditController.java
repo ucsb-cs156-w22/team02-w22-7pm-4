@@ -57,8 +57,6 @@ public class CollegiateSubredditController extends ApiController{
             //@ApiParam("done") @RequestParam Boolean done) 
             {
         loggingService.logMethod();
-        //CurrentUser currentUser = getCurrentUser();
-        //log.info("currentUser={}", currentUser);
 
         CollegiateSubreddit collegiateSubreddit = new CollegiateSubreddit();
         //collegiateSubreddit.setUser(currentUser.getUser());
@@ -70,15 +68,63 @@ public class CollegiateSubredditController extends ApiController{
         return savedcollegiateSubreddit;
     }
 
+    public class CollegiateSubredditOrError {
+        Long id;
+        CollegiateSubreddit todo;
+        ResponseEntity<String> error;
+
+        public CollegiateSubredditOrError(Long id) {
+            this.id = id;
+        }
+    }
+    public CollegiateSubredditOrError doesCollegiateSubredditExist(CollegiateSubredditOrError toe) {
+
+        Optional<CollegiateSubreddit> optionalTodo = collegiateSubredditRepository.findById(toe.id);
+
+        if (optionalTodo.isEmpty()) {
+            toe.error = ResponseEntity
+                    .badRequest()
+                    .body(String.format("CollegiateSubreddit with id %d not found", toe.id));
+        } else {
+            toe.todo = optionalTodo.get();
+        }
+        return toe;
+    }
+
+
+    @ApiOperation(value = "get subreddit with given id")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/collegiateSubreddits?id=123")
+
+    public ResponseEntity<String> getCollegiateSubredditById(
+        @ApiParam("id") @RequestParam Long id) throws JsonProcessingException {
+        loggingService.logMethod();
+        CollegiateSubredditOrError toe = new CollegiateSubredditOrError(id);
+
+        toe = doesCollegiateSubredditExist(toe);
+        if (toe.error != null) {
+            return toe.error;
+        }
+        /*
+        toe = doesTodoBelongToCurrentUser(toe);
+        if (toe.error != null) {
+            return toe.error;
+        }
+        */
+        String body = mapper.writeValueAsString(toe.todo);
+        return ResponseEntity.ok().body(body);
+    }
+
+
     /*
-    @ApiOperation(value = "List this user's todos")
+    @ApiOperation(value = "List this user's CollegiateSubreddit")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/all")
-    public Iterable<Todo> thisUsersTodos() {
+    public Iterable<CollegiateSubreddit> thisUsersTodos() {
         loggingService.logMethod();
         CurrentUser currentUser = getCurrentUser();
-        Iterable<Todo> todos = todoRepository.findAllByUserId(currentUser.getUser().getId());
+        Iterable<CollegiateSubreddit> todos = CollegiateSubredditRepository.findAllByUserId(currentUser.getUser().getId());
         return todos;
-    }
-    */
+    }*/
+    
 }
