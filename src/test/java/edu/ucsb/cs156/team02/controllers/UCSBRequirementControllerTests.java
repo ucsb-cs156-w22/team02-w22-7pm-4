@@ -34,6 +34,7 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
     @MockBean
     UCSBRequirementRepository repo;
 
+// just waiting for the tests to run on github
     // all
 
     @Test

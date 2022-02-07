@@ -35,7 +35,7 @@ public class UCSBRequirement {
   private String collegeCode;
   private String objCode;
 
-  public UCSBRequirement(long id, int cc, int unit, boolean inactive, String rc, String rt, String collegeCode, String oc)
+  /* public UCSBRequirement(long id, int cc, int unit, boolean inactive, String rc, String rt, String collegeCode, String oc)
   {
     this.id = id;
     this.courseCount = cc;
@@ -45,5 +45,5 @@ public class UCSBRequirement {
     this.requirementTranslation = rt;
     this.collegeCode = collegeCode;
     this.objCode = oc;
-  }
+  } */
 }

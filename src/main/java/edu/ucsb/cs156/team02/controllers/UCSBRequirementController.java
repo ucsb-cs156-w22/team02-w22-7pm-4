@@ -42,11 +42,12 @@ public class UCSBRequirementController extends ApiController {
     @ApiOperation(value = "List this user's UCSBRequirements")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/all")
-    public Iterable<UCSBRequirement> thisUsersUCSBRequirement() {
+    public Iterable<UCSBRequirement> getUCSBRequirement() {
         loggingService.logMethod();
-        CurrentUser currentUser = getCurrentUser();
-        Iterable<UCSBRequirement> ucsbRequirements = UCSBRequirementRepository.findAllByUserId(currentUser.getUser().getId());
-        return ucsbRequirements;
+        Iterable<UCSBRequirement> reqs = ucsbRequirementRepository.findAll();
+        //CurrentUser currentUser = getCurrentUser();
+        //Iterable<UCSBRequirement> ucsbRequirements = UCSBRequirementRepository.findAllByUserId(currentUser.getUser().getId());
+        return reqs;
     }
 
     @ApiOperation(value = "Create a new UCSBRequirement for the table")
@@ -65,7 +66,7 @@ public class UCSBRequirementController extends ApiController {
         loggingService.logMethod();
 
         UCSBRequirement ucsbRequirement = new UCSBRequirement(id, courseCount, unit, inactive, requirementCode, requirementTranslation, collegeCode, objCode);
-        UCSBRequirement savedUCSBRequirement = UCSBRequirementRepository.save(ucsbRequirement);
+        UCSBRequirement savedUCSBRequirement = ucsbRequirementRepository.save(ucsbRequirement);
         return savedUCSBRequirement;
     }
 
