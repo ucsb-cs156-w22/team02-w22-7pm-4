@@ -30,16 +30,18 @@ public class UCSBSubjectController extends ApiController {
      * whether subjects exist, and whether they belong to the current user,
      * along with the error messages pertaining to those situations. It
      * bundles together the state needed for those checks.
-     */
-    public class UCSBSubjectOrError {
-        Long id;
-        UCSBSubject subject;
-        ResponseEntity<String> error;
-
-        public UCSBSubjectOrError(Long id) {
-            this.id = id;
-        }
-    }
+     *
+     * Don't need yet because we haven't written these methods
+     * /
+//    public class UCSBSubjectOrError {
+//        Long id;
+//        UCSBSubject subject;
+//        ResponseEntity<String> error;
+//
+//        public UCSBSubjectOrError(Long id) {
+//            this.id = id;
+//        }
+//    }
 
     @Autowired
     UCSBSubjectRepository subjectRepository;
