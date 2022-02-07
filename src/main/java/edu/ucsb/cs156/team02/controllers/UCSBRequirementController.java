@@ -35,7 +35,7 @@ public class UCSBRequirementController extends ApiController {
 
     /**
      * This inner class helps us factor out some code for checking
-     * whether todos exist, and whether they belong to the current user,
+     * whether ucsbRequirements exist, and whether they belong to the current user,
      * along with the error messages pertaining to those situations. It
      * bundles together the state needed for those checks.
      */
@@ -74,10 +74,10 @@ public class UCSBRequirementController extends ApiController {
         return ucsbRequirements;
     }
 
-    @ApiOperation(value = "Get a single todo (if it belongs to current user)")
+    @ApiOperation(value = "Get a single ucsbRequirement (if it belongs to current user)")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("")
-    public ResponseEntity<String> getTodoById(
+    public ResponseEntity<String> getUCSBRequirementById(
             @ApiParam("id") @RequestParam Long id) throws JsonProcessingException {
         loggingService.logMethod();
         UCSBRequirementOrError uoe = new UCSBRequirementOrError(id);
@@ -94,7 +94,7 @@ public class UCSBRequirementController extends ApiController {
         return ResponseEntity.ok().body(body);
     }
 
-    @ApiOperation(value = "Get a single todo (no matter who it belongs to, admin only)")
+    @ApiOperation(value = "Get a single ucsbRequirement (no matter who it belongs to, admin only)")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin")
     public ResponseEntity<String> getUCSBRequirementById_admin(
@@ -108,14 +108,14 @@ public class UCSBRequirementController extends ApiController {
             return uoe.error;
         }
 
-        String body = mapper.writeValueAsString(uoe.todo);
+        String body = mapper.writeValueAsString(uoe.ucsbRequirement);
         return ResponseEntity.ok().body(body);
     }
 
     @ApiOperation(value = "Create a new UCSBRequirement")
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/post")
-    public Todo postTodo(
+    public UCSBRequirement postUCSBRequirement(
             @ApiParam("title") @RequestParam String title,
             @ApiParam("details") @RequestParam String details,
             @ApiParam("done") @RequestParam Boolean done) {
@@ -123,158 +123,158 @@ public class UCSBRequirementController extends ApiController {
         CurrentUser currentUser = getCurrentUser();
         log.info("currentUser={}", currentUser);
 
-        Todo todo = new Todo();
-        todo.setUser(currentUser.getUser());
-        todo.setTitle(title);
-        todo.setDetails(details);
-        todo.setDone(done);
-        Todo savedTodo = todoRepository.save(todo);
-        return savedTodo;
+        UCSBRequirement ucsbRequirement = new UCSBRequirement();
+        ucsbRequirement.setUser(currentUser.getUser());
+        ucsbRequirement.setTitle(title);
+        ucsbRequirement.setDetails(details);
+        ucsbRequirement.setDone(done);
+        UCSBRequirement savedUCSBRequirement = ucsbRequirementRepository.save(ucsbRequirement);
+        return savedUCSBRequirement;
     }
 
-    @ApiOperation(value = "Delete a Todo owned by this user")
+    @ApiOperation(value = "Delete a UCSBRequirement owned by this user")
     @PreAuthorize("hasRole('ROLE_USER')")
     @DeleteMapping("")
-    public ResponseEntity<String> deleteTodo(
+    public ResponseEntity<String> deleteUCSBRequirement(
             @ApiParam("id") @RequestParam Long id) {
         loggingService.logMethod();
 
-        TodoOrError toe = new TodoOrError(id);
+        UCSBRequirementOrError uoe = new UCSBRequirementOrError(id);
 
-        toe = doesTodoExist(toe);
-        if (toe.error != null) {
-            return toe.error;
+        uoe = doesUCSBRequirementExist(uoe);
+        if (uoe.error != null) {
+            return uoe.error;
         }
 
-        toe = doesTodoBelongToCurrentUser(toe);
-        if (toe.error != null) {
-            return toe.error;
+        uoe = doesUCSBRequirementBelongToCurrentUser(uoe);
+        if (uoe.error != null) {
+            return uoe.error;
         }
-        todoRepository.deleteById(id);
-        return ResponseEntity.ok().body(String.format("todo with id %d deleted", id));
+        ucsbRequirementRepository.deleteById(id);
+        return ResponseEntity.ok().body(String.format("ucsbRequirement with id %d deleted", id));
 
     }
 
-    @ApiOperation(value = "Delete another user's todo")
+    @ApiOperation(value = "Delete another user's ucsbRequirement")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/admin")
-    public ResponseEntity<String> deleteTodo_Admin(
+    public ResponseEntity<String> deleteUCSBRequirement_Admin(
             @ApiParam("id") @RequestParam Long id) {
         loggingService.logMethod();
 
-        TodoOrError toe = new TodoOrError(id);
+        UCSBRequirementOrError uoe = new UCSBRequirementOrError(id);
 
-        toe = doesTodoExist(toe);
-        if (toe.error != null) {
-            return toe.error;
+        uoe = doesUCSBRequirementExist(uoe);
+        if (uoe.error != null) {
+            return uoe.error;
         }
 
-        todoRepository.deleteById(id);
+        ucsbRequirementRepository.deleteById(id);
 
-        return ResponseEntity.ok().body(String.format("todo with id %d deleted", id));
+        return ResponseEntity.ok().body(String.format("ucsbRequirement with id %d deleted", id));
 
     }
 
-    @ApiOperation(value = "Update a single todo (if it belongs to current user)")
+    @ApiOperation(value = "Update a single ucsbRequirement (if it belongs to current user)")
     @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping("")
-    public ResponseEntity<String> putTodoById(
+    public ResponseEntity<String> putUCSBRequirementById(
             @ApiParam("id") @RequestParam Long id,
-            @RequestBody @Valid Todo incomingTodo) throws JsonProcessingException {
+            @RequestBody @Valid UCSBRequirement incomingUCSBRequirement) throws JsonProcessingException {
         loggingService.logMethod();
 
         CurrentUser currentUser = getCurrentUser();
         User user = currentUser.getUser();
 
-        TodoOrError toe = new TodoOrError(id);
+        UCSBRequirementOrError uoe = new UCSBRequirementOrError(id);
 
-        toe = doesTodoExist(toe);
-        if (toe.error != null) {
-            return toe.error;
+        uoe = doesUCSBRequirementExist(uoe);
+        if (uoe.error != null) {
+            return uoe.error;
         }
-        toe = doesTodoBelongToCurrentUser(toe);
-        if (toe.error != null) {
-            return toe.error;
+        uoe = doesUCSBRequirementBelongToCurrentUser(uoe);
+        if (uoe.error != null) {
+            return uoe.error;
         }
 
-        incomingTodo.setUser(user);
-        todoRepository.save(incomingTodo);
+        incomingUCSBRequirement.setUser(user);
+        ucsbRequirementRepository.save(incomingUCSBRequirement);
 
-        String body = mapper.writeValueAsString(incomingTodo);
+        String body = mapper.writeValueAsString(incomingUCSBRequirement);
         return ResponseEntity.ok().body(body);
     }
 
-    @ApiOperation(value = "Update a single todo (regardless of ownership, admin only, can't change ownership)")
+    @ApiOperation(value = "Update a single ucsbRequirement (regardless of ownership, admin only, can't change ownership)")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/admin")
-    public ResponseEntity<String> putTodoById_admin(
+    public ResponseEntity<String> putUCSBRequirementById_admin(
             @ApiParam("id") @RequestParam Long id,
-            @RequestBody @Valid Todo incomingTodo) throws JsonProcessingException {
+            @RequestBody @Valid UCSBRequirement incomingUCSBRequirement) throws JsonProcessingException {
         loggingService.logMethod();
 
-        TodoOrError toe = new TodoOrError(id);
+        UCSBRequirementOrError uoe = new UCSBRequirementOrError(id);
 
-        toe = doesTodoExist(toe);
-        if (toe.error != null) {
-            return toe.error;
+        uoe = doesUCSBRequirementExist(uoe);
+        if (uoe.error != null) {
+            return uoe.error;
         }
 
         // Even the admin can't change the user; they can change other details
         // but not that.
 
-        User previousUser = toe.todo.getUser();
-        incomingTodo.setUser(previousUser);
-        todoRepository.save(incomingTodo);
+        User previousUser = uoe.ucsbRequirement.getUser();
+        incomingUCSBRequirement.setUser(previousUser);
+        ucsbRequirementRepository.save(incomingUCSBRequirement);
 
-        String body = mapper.writeValueAsString(incomingTodo);
+        String body = mapper.writeValueAsString(incomingUCSBRequirement);
         return ResponseEntity.ok().body(body);
     }
 
     /**
-     * Pre-conditions: toe.id is value to look up, toe.todo and toe.error are null
+     * Pre-conditions: uoe.id is value to look up, uoe.ucsbRequirement and uoe.error are null
      * 
-     * Post-condition: if todo with id toe.id exists, toe.todo now refers to it, and
+     * Post-condition: if ucsbRequirement with id uoe.id exists, uoe.ucsbRequirement now refers to it, and
      * error is null.
-     * Otherwise, todo with id toe.id does not exist, and error is a suitable return
+     * Otherwise, ucsbRequirement with id uoe.id does not exist, and error is a suitable return
      * value to
      * report this error condition.
      */
-    public TodoOrError doesTodoExist(TodoOrError toe) {
+    public UCSBRequirementOrError doesUCSBRequirementExist(UCSBRequirementOrError uoe) {
 
-        Optional<Todo> optionalTodo = todoRepository.findById(toe.id);
+        Optional<UCSBRequirement> optionalUCSBRequirement = ucsbRequirementRepository.findById(uoe.id);
 
-        if (optionalTodo.isEmpty()) {
-            toe.error = ResponseEntity
+        if (optionalUCSBRequirement.isEmpty()) {
+            uoe.error = ResponseEntity
                     .badRequest()
-                    .body(String.format("todo with id %d not found", toe.id));
+                    .body(String.format("ucsbRequirement with id %d not found", uoe.id));
         } else {
-            toe.todo = optionalTodo.get();
+            uoe.ucsbRequirement = optionalUCSBRequirement.get();
         }
-        return toe;
+        return uoe;
     }
 
     /**
-     * Pre-conditions: toe.todo is non-null and refers to the todo with id toe.id,
-     * and toe.error is null
+     * Pre-conditions: uoe.ucsbRequirement is non-null and refers to the ucsbRequirement with id uoe.id,
+     * and uoe.error is null
      * 
-     * Post-condition: if todo belongs to current user, then error is still null.
+     * Post-condition: if ucsbRequirement belongs to current user, then error is still null.
      * Otherwise error is a suitable
      * return value.
      */
-    public TodoOrError doesTodoBelongToCurrentUser(TodoOrError toe) {
+    public UCSBRequirementOrError doesUCSBRequirementBelongToCurrentUser(UCSBRequirementOrError uoe) {
         CurrentUser currentUser = getCurrentUser();
         log.info("currentUser={}", currentUser);
 
         Long currentUserId = currentUser.getUser().getId();
-        Long todoUserId = toe.todo.getUser().getId();
-        log.info("currentUserId={} todoUserId={}", currentUserId, todoUserId);
+        Long ucsbRequirementUserId = uoe.ucsbRequirement.getUser().getId();
+        log.info("currentUserId={} ucsbRequirementUserId={}", currentUserId, ucsbRequirementUserId);
 
-        if (todoUserId != currentUserId) {
-            toe.error = ResponseEntity
+        if (ucsbRequirementUserId != currentUserId) {
+            uoe.error = ResponseEntity
                     .badRequest()
-                    .body(String.format("todo with id %d not found", toe.id));
+                    .body(String.format("ucsbRequirement with id %d not found", uoe.id));
         }
-        return toe;
+        return uoe;
     }
 
 }
