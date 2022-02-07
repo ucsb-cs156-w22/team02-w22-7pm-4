@@ -32,7 +32,7 @@ public class UCSBSubjectController extends ApiController {
      * bundles together the state needed for those checks.
      *
      * Don't need yet because we haven't written these methods
-     * /
+     */
 //    public class UCSBSubjectOrError {
 //        Long id;
 //        UCSBSubject subject;
