@@ -35,8 +35,4 @@ public class UCSBSubject {
     private boolean inactive;
     private boolean done;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
 }

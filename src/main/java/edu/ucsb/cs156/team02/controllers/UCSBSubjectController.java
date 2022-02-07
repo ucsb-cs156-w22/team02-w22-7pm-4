@@ -67,10 +67,8 @@ public class UCSBSubjectController extends ApiController {
             @ApiParam("inactive") @RequestParam Boolean inactive,
             @ApiParam("done") @RequestParam Boolean done) {
         loggingService.logMethod();
-        CurrentUser currentUser = getCurrentUser();
 
         UCSBSubject subject = new UCSBSubject();
-        subject.setUser(currentUser.getUser());
         subject.setSubjectCode(subjectCode);
         subject.setSubjectTranslation(subjectTranslation);
         subject.setDeptCode(deptCode);
