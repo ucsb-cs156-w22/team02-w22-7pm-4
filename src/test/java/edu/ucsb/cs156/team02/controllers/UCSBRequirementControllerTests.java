@@ -66,20 +66,20 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
         // arrange
 
         UCSBRequirement req1 = UCSBRequirement.builder()
-                .id(0)
-                .courseCount(0)
-                .unit(0)
-                .inactive(false)
+                .id(0L)
+                .courseCount(1)
+                .unit(2)
+                .inactive(true)
                 .requirementCode("Req 1")
                 .requirementTranslation("Req 1")
                 .collegeCode("Req 1")
                 .objCode("Req 1")
                 .build();
         UCSBRequirement req2 = UCSBRequirement.builder()
-                .id(0)
-                .courseCount(0)
-                .unit(0)
-                .inactive(false)
+                .id(1L)
+                .courseCount(2)
+                .unit(3)
+                .inactive(true)
                 .requirementCode("Req 2")
                 .requirementTranslation("Req 2")
                 .collegeCode("Req 2")
@@ -109,9 +109,9 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
 
         UCSBRequirement expectedReq = UCSBRequirement.builder()
                 .id(0L)
-                .courseCount(0)
-                .unit(0)
-                .inactive(false)
+                .courseCount(2)
+                .unit(3)
+                .inactive(true)
                 .requirementCode("Test")
                 .requirementTranslation("Test")
                 .collegeCode("Test")
@@ -122,7 +122,7 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
 
         // act
         MvcResult response = mockMvc.perform(
-                post("/api/UCSBRequirements/post?id=0&courseCount=0&unit=0&inactive=false&requirementCode=Test&requirementTranslation=Test&collegeCode=Test&objCode=Test")
+                post("/api/UCSBRequirements/post?id=0&courseCount=2&unit=3&inactive=true&requirementCode=Test&requirementTranslation=Test&collegeCode=Test&objCode=Test")
                         .with(csrf()))
                 .andExpect(status().isOk()).andReturn();
 

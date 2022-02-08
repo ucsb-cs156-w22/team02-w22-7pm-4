@@ -52,10 +52,9 @@ public class UCSBRequirementController extends ApiController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/post")
     public UCSBRequirement postUCSBRequirement(
-            @ApiParam("id") @RequestParam long id,
             @ApiParam("course count") @RequestParam int courseCount,
             @ApiParam("units") @RequestParam int unit,
-            @ApiParam("inactive") @RequestParam boolean inactive,
+            @ApiParam("inactive") @RequestParam Boolean inactive,
             @ApiParam("requirement code") @RequestParam String requirementCode,
             @ApiParam("requirement translation") @RequestParam String requirementTranslation,
             @ApiParam("college code") @RequestParam String collegeCode,
@@ -63,7 +62,6 @@ public class UCSBRequirementController extends ApiController {
         loggingService.logMethod();
 
         UCSBRequirement req = new UCSBRequirement();
-        req.setId(id);
         req.setCourseCount(courseCount);
         req.setUnit(unit);
         req.setInactive(inactive);
