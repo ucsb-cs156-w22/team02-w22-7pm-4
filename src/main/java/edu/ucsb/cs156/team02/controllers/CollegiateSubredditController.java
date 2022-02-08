@@ -97,7 +97,8 @@ public class CollegiateSubredditController extends ApiController{
 
     @ApiOperation(value = "get subreddit with given id")
     @PreAuthorize("hasRole('ROLE_USER')")
-    @GetMapping("/collegiateSubreddits?id=123")
+    //@GetMapping("/collegiateSubreddits?id=123")
+    @GetMapping("")
 
     public ResponseEntity<String> getCollegiateSubredditById(
         @ApiParam("id") @RequestParam Long id) throws JsonProcessingException {
@@ -108,12 +109,7 @@ public class CollegiateSubredditController extends ApiController{
         if (toe.error != null) {
             return toe.error;
         }
-        /*
-        toe = doesTodoBelongToCurrentUser(toe);
-        if (toe.error != null) {
-            return toe.error;
-        }
-        */
+        
         String body = mapper.writeValueAsString(toe.todo);
         return ResponseEntity.ok().body(body);
     }
