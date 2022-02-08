@@ -39,7 +39,7 @@ public class UCSBRequirementController extends ApiController {
     @Autowired
     ObjectMapper mapper;
 
-    @ApiOperation(value = "List this user's UCSBRequirements")
+    @ApiOperation(value = "List all UCSBRequirements")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/all")
     public Iterable<UCSBRequirement> getUCSBRequirement() {
@@ -53,13 +53,13 @@ public class UCSBRequirementController extends ApiController {
     @PostMapping("/post")
     public UCSBRequirement postUCSBRequirement(
             @ApiParam("id") @RequestParam long id,
-            @ApiParam("courseCount") @RequestParam int courseCount,
+            @ApiParam("course count") @RequestParam int courseCount,
             @ApiParam("units") @RequestParam int unit,
             @ApiParam("inactive") @RequestParam boolean inactive,
-            @ApiParam("requirementCode") @RequestParam String requirementCode,
-            @ApiParam("requirementTranslation") @RequestParam String requirementTranslation,
-            @ApiParam("collegeCode") @RequestParam String collegeCode,
-            @ApiParam("objCode") @RequestParam String objCode) {
+            @ApiParam("requirement code") @RequestParam String requirementCode,
+            @ApiParam("requirement translation") @RequestParam String requirementTranslation,
+            @ApiParam("college code") @RequestParam String collegeCode,
+            @ApiParam("object code") @RequestParam String objCode) {
         loggingService.logMethod();
 
         UCSBRequirement req = new UCSBRequirement();

@@ -8,5 +8,5 @@ import java.util.Optional;
 
  @Repository
  public interface UCSBRequirementRepository extends CrudRepository<UCSBRequirement, Long> {
-   Iterable<UCSBRequirement> findBySubject(String subject);
+   //Iterable<UCSBRequirement> findBySubject(String subject);
  }
