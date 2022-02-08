@@ -37,6 +37,9 @@ public class CollegiateSubredditController extends ApiController{
     @Autowired
     CollegiateSubredditRepository collegiateSubredditRepository;
 
+    @Autowired
+    ObjectMapper mapper;
+
     @ApiOperation(value = "List all CollegiateSubreddits")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/all")
