@@ -240,22 +240,21 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
                 .build(); 
                        
         UCSBRequirement u2 = UCSBRequirement.builder()
-                .id(7L)
-                .courseCount(2)
+                .id(6L)
+                .courseCount(1)
                 .unit(6) //edited
-                .inactive(true)
+                .inactive(false)
                 .requirementCode("Test edit")
                 .requirementTranslation("Test edit")
-                .collegeCode("Test")
-                .objCode("Test")
+                .collegeCode("Test edit")
+                .objCode("Test edit")
                 .build();  
         
         String requestBody = mapper.writeValueAsString(u2);
-
+        u2.setId(7L);
+        String expectedReturn = mapper.writeValueAsString(u2);
         when(repo.findById(eq(7L))).thenReturn(Optional.of(u1));
         when(repo.save(eq(u2))).thenReturn(u2);
-        //String requestBody = mapper.writeValueAsString(u2);
-
         // act
         MvcResult response = mockMvc.perform(
                 put("/api/UCSBRequirements?id=7")
@@ -266,10 +265,12 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
                 .andExpect(status().isOk()).andReturn();
 
         // assert
+
         verify(repo, times(1)).findById(7L);
-        verify(repo, times(1)).save(u2); // should be saved with correct user
+        verify(repo, times(1)).save(u2); // should be saved with correct 
         String responseString = response.getResponse().getContentAsString();
-        assertEquals(requestBody, responseString);
+        
+        assertEquals(expectedReturn, responseString);
     }
 
     @WithMockUser(roles = { "USER" })
@@ -304,5 +305,60 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
         verify(repo, times(1)).findById(7L);
         String responseString = response.getResponse().getContentAsString();
         assertEquals("id 7 not found", responseString);
+    }
+
+    // delete
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void api_requirements__user_logged_in__delete_todo() throws Exception {
+        // arrange
+        UCSBRequirement req1 = UCSBRequirement.builder()
+                .id(7L)
+                .courseCount(2)
+                .unit(3)
+                .inactive(true)
+                .requirementCode("Test")
+                .requirementTranslation("Test")
+                .collegeCode("Test")
+                .objCode("Test")
+                .build(); 
+        when(repo.findById(eq(7L))).thenReturn(Optional.of(req1));
+        // act
+        MvcResult response = mockMvc.perform(
+                delete("/api/UCSBRequirements?id=7")
+                        .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+        // assert
+        verify(repo, times(1)).findById(7L);
+        verify(repo, times(1)).deleteById(7L);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("record 7 deleted", responseString);
+    }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void api_requirements__user_logged_in__delete_todo_that_does_not_exist() throws Exception {
+        // arrange
+        UCSBRequirement req1 = UCSBRequirement.builder()
+                .id(7L)
+                .courseCount(2)
+                .unit(3)
+                .inactive(true)
+                .requirementCode("Test")
+                .requirementTranslation("Test")
+                .collegeCode("Test")
+                .objCode("Test")
+                .build(); 
+        when(repo.findById(eq(7L))).thenReturn(Optional.empty());
+        // act
+        MvcResult response = mockMvc.perform(
+                delete("/api/UCSBRequirements?id=7")
+                        .with(csrf()))
+                .andExpect(status().isBadRequest()).andReturn();
+        // assert
+        verify(repo, times(1)).findById(7L);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("record 7 not found", responseString);
     }
 }
