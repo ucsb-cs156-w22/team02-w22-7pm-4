@@ -134,9 +134,18 @@ public class CollegiateSubredditController extends ApiController{
         }
 
         //incomingTodo.setUser(user);
-        collegiateSubredditRepository.save(incomingTodo);
+        //collegiateSubredditRepository.save(incomingTodo);
 
-        String body = mapper.writeValueAsString(incomingTodo);
+        //String body = mapper.writeValueAsString(incomingTodo);
+
+        CollegiateSubreddit oldTodo = toe.todo;
+        oldTodo.setName(incomingTodo.getName());
+        oldTodo.setLocation(incomingTodo.getLocation());
+        oldTodo.setSubreddit(incomingTodo.getSubreddit());
+
+        collegiateSubredditRepository.save(oldTodo);
+        String body = mapper.writeValueAsString(oldTodo);
+
         return ResponseEntity.ok().body(body);
     }
 
