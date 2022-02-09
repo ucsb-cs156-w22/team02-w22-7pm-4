@@ -1,19 +1,15 @@
 package edu.ucsb.cs156.team02.controllers;
 
-import edu.ucsb.cs156.team02.entities.Todo;
-import edu.ucsb.cs156.team02.repositories.TodoRepository;
 import edu.ucsb.cs156.team02.repositories.UserRepository;
 import edu.ucsb.cs156.team02.testconfig.TestConfig;
 import edu.ucsb.cs156.team02.ControllerTestCase;
 import edu.ucsb.cs156.team02.entities.UCSBSubject;
-import edu.ucsb.cs156.team02.entities.User;
 import edu.ucsb.cs156.team02.repositories.UCSBSubjectRepository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -33,7 +29,7 @@ import static org.mockito.Mockito.when;
 
 @WebMvcTest(controllers = UCSBSubjectController.class)
 @Import(TestConfig.class)
-class UCSBSubjectControllerTest extends ControllerTestCase {
+class UCSBSubjectControllerTests extends ControllerTestCase {
 
     @MockBean
     UCSBSubjectRepository subjectRepository;
