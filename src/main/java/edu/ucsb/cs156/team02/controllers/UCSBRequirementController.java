@@ -74,5 +74,63 @@ public class UCSBRequirementController extends ApiController {
         return savedUCSBRequirement;
     }
 
+    @ApiOperation(value = "Get a single UCSB Requirement")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("")
+    public ResponseEntity<String> getUCSBRequirementById(
+            @ApiParam("id") @RequestParam Long id) throws JsonProcessingException {
+        loggingService.logMethod();
+
+        Optional<UCSBRequirement> ucsbRequirement = ucsbRequirementRepository.findById(id);
+
+        if (ucsbRequirement.isEmpty()) {
+            return ResponseEntity.badRequest()
+                .body(String.format("id %d not found", id));
+        }
+
+        String body = mapper.writeValueAsString(ucsbRequirement);
+        return ResponseEntity.ok().body(body);
+    }
+
+    @ApiOperation(value = "Update a UCSB requirement.")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PutMapping("")
+    public ResponseEntity<String> putUCSBRequirement(
+        @ApiParam("id") @RequestParam Long id,
+        @RequestBody @Valid UCSBRequirement newReq)
+        throws JsonProcessingException
+    {
+        loggingService.logMethod();
+        Optional<UCSBRequirement> ucsbRequirement = ucsbRequirementRepository.findById(id);
+
+        if (ucsbRequirement.isEmpty()) {
+            return ResponseEntity.badRequest()
+                .body(String.format("id %d not found", id));
+        }
+        newReq.setId(id);
+        repository.save(newReq);
+
+        String body = mapper.writeValueAsString(newReq);
+        return ResponseEntity.ok().body(body);
+    }
+
+    @ApiOperation(value = "Delete a UCSB requirement.")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @DeleteMapping("")
+    public ResponseEntity<String> deleteUCSBRequirement(
+        @ApiParam("id") @RequestParam Long id)
+    {
+        loggingService.logMethod();
+
+        Optional<UCSBRequirement> ucsbRequirement = ucsbRequirementRepository.findById(id);
+
+        if (ucsbRequirement.isEmpty()) {
+            return ResponseEntity.badRequest()
+                .body(String.format("record %d not found", id));
+        }
+
+        ucsbRequirement.deleteById(id);
+        return ResponseEntity.ok().body(String.format("record %d deleted", id));
+    }
 
 }
