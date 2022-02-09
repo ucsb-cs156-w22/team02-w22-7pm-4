@@ -108,7 +108,7 @@ public class UCSBRequirementController extends ApiController {
                 .body(String.format("id %d not found", id));
         }
         newReq.setId(id);
-        repository.save(newReq);
+        ucsbRequirementRepository.save(newReq);
 
         String body = mapper.writeValueAsString(newReq);
         return ResponseEntity.ok().body(body);
@@ -129,7 +129,7 @@ public class UCSBRequirementController extends ApiController {
                 .body(String.format("record %d not found", id));
         }
 
-        ucsbRequirement.deleteById(id);
+        ucsbRequirementRepository.deleteById(id);
         return ResponseEntity.ok().body(String.format("record %d deleted", id));
     }
 

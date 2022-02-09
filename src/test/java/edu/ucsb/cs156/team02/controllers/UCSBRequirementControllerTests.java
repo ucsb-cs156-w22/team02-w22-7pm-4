@@ -159,7 +159,7 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
                 .collegeCode("Test")
                 .objCode("Test")
                 .build();        
-        when(UCSBRequirementRepository.findById(eq(7L))).thenReturn(Optional.of(u1));
+        when(repo.findById(eq(7L))).thenReturn(Optional.of(u1));
 
         // act
         MvcResult response = mockMvc.perform(get("/api/UCSBRequirements?id=7"))
@@ -167,7 +167,7 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
 
         // assert
 
-        verify(UCSBRequirementRepository, times(1)).findById(eq(7L));
+        verify(repo, times(1)).findById(eq(7L));
         String expectedJson = mapper.writeValueAsString(u1);
         String responseString = response.getResponse().getContentAsString();
         assertEquals(expectedJson, responseString);
@@ -181,7 +181,7 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
 
         User u = currentUserService.getCurrentUser().getUser();
 
-        when(UCSBRequirementRepository.findById(eq(7L))).thenReturn(Optional.empty());
+        when(repo.findById(eq(7L))).thenReturn(Optional.empty());
 
         // act
         MvcResult response = mockMvc.perform(get("/api/UCSBRequirements?id=7"))
@@ -189,12 +189,39 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
 
         // assert
 
-        verify(UCSBRequirementRepository, times(1)).findById(eq(7L));
+        verify(repo, times(1)).findById(eq(7L));
         String responseString = response.getResponse().getContentAsString();
-        assertEquals("requirement with id 7 not found", responseString);
+        assertEquals("id 7 not found", responseString);
     }
 
     // put 
+
+    @Test
+    public void api_requirements_does_put() throws Exception
+    {
+        UCSBRequirement u1 = UCSBRequirement.builder()
+                .id(7L)
+                .courseCount(2)
+                .unit(3)
+                .inactive(true)
+                .requirementCode("Test")
+                .requirementTranslation("Test")
+                .collegeCode("Test")
+                .objCode("Test")
+                .build();       
+
+        String requestBody = mapper.writeValueAsString(u1);
+
+        mockMvc.perform(
+            put("/api/UCSBRequirements?id=0")
+            .contentType(MediaType.APPLICATION_JSON)
+            .characterEncoding("utf-8")
+            .content(requestBody)
+            .with(csrf()) 
+        )
+        .andExpect(status().is(403));
+    }
+
     @WithMockUser(roles = { "USER" })
     @Test
     public void api_requirements__user_logged_in__put() throws Exception {
@@ -210,16 +237,28 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
                 .requirementTranslation("Test")
                 .collegeCode("Test")
                 .objCode("Test")
-                .build();                
+                .build(); 
+                       
+        UCSBRequirement u2 = UCSBRequirement.builder()
+                .id(7L)
+                .courseCount(2)
+                .unit(6) //edited
+                .inactive(true)
+                .requirementCode("Test edit")
+                .requirementTranslation("Test edit")
+                .collegeCode("Test")
+                .objCode("Test")
+                .build();  
         
-        String requestBody = mapper.writeValueAsString(updatedTodo);
-        String expectedReturn = mapper.writeValueAsString(correctTodo);
+        String requestBody = mapper.writeValueAsString(u2);
 
-        when(todoRepository.findById(eq(7L))).thenReturn(Optional.of(todo1));
+        when(repo.findById(eq(7L))).thenReturn(Optional.of(u1));
+        when(repo.save(eq(u2))).thenReturn(u2);
+        //String requestBody = mapper.writeValueAsString(u2);
 
         // act
         MvcResult response = mockMvc.perform(
-                put("/api/UCSBRequirements?id=67")
+                put("/api/UCSBRequirements?id=7")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("utf-8")
                         .content(requestBody)
@@ -227,26 +266,34 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
                 .andExpect(status().isOk()).andReturn();
 
         // assert
-        verify(todoRepository, times(1)).findById(67L);
-        verify(todoRepository, times(1)).save(correctTodo); // should be saved with correct user
+        verify(repo, times(1)).findById(7L);
+        verify(repo, times(1)).save(u2); // should be saved with correct user
         String responseString = response.getResponse().getContentAsString();
-        assertEquals(expectedReturn, responseString);
+        assertEquals(requestBody, responseString);
     }
 
     @WithMockUser(roles = { "USER" })
     @Test
-    public void api_todos__user_logged_in__cannot_put_todo_that_does_not_exist() throws Exception {
+    public void api_requirements__cannot_put_that_does_not_exist() throws Exception {
         // arrange
+        UCSBRequirement u1 = UCSBRequirement.builder()
+                .id(7L)
+                .courseCount(2)
+                .unit(3)
+                .inactive(true)
+                .requirementCode("Test")
+                .requirementTranslation("Test")
+                .collegeCode("Test")
+                .objCode("Test")
+                .build(); 
+                       
+        String requestBody = mapper.writeValueAsString(u1);
 
-        Todo updatedTodo = Todo.builder().title("New Title").details("New Details").done(true).id(67L).build();
-
-        String requestBody = mapper.writeValueAsString(updatedTodo);
-
-        when(todoRepository.findById(eq(67L))).thenReturn(Optional.empty());
+        when(repo.findById(eq(7L))).thenReturn(Optional.empty());
 
         // act
         MvcResult response = mockMvc.perform(
-                put("/api/todos?id=67")
+                put("/api/UCSBRequirements?id=7")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("utf-8")
                         .content(requestBody)
@@ -254,8 +301,8 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
                 .andExpect(status().isBadRequest()).andReturn();
 
         // assert
-        verify(todoRepository, times(1)).findById(67L);
+        verify(repo, times(1)).findById(7L);
         String responseString = response.getResponse().getContentAsString();
-        assertEquals("todo with id 67 not found", responseString);
+        assertEquals("id 7 not found", responseString);
     }
 }
