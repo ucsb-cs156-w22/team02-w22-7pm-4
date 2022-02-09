@@ -1,6 +1,7 @@
 package edu.ucsb.cs156.team02.controllers;
 
 import edu.ucsb.cs156.team02.entities.UCSBSubject;
+import edu.ucsb.cs156.team02.entities.User;
 import edu.ucsb.cs156.team02.models.CurrentUser;
 import edu.ucsb.cs156.team02.repositories.UCSBSubjectRepository;
 import io.swagger.annotations.Api;
@@ -8,16 +9,24 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.util.Optional;
+
 
 @Api(description = "UCSBSubjects")
 @RequestMapping("/api/UCSBSubjects")
@@ -33,15 +42,15 @@ public class UCSBSubjectController extends ApiController {
      *
      * Don't need yet because we haven't written these methods
      */
-//    public class UCSBSubjectOrError {
-//        Long id;
-//        UCSBSubject subject;
-//        ResponseEntity<String> error;
-//
-//        public UCSBSubjectOrError(Long id) {
-//            this.id = id;
-//        }
-//    }
+   public class UCSBSubjectOrError {
+       Long id;
+       UCSBSubject subject;
+       ResponseEntity<String> error;
+
+       public UCSBSubjectOrError(Long id) {
+           this.id = id;
+       }
+   }
 
     @Autowired
     UCSBSubjectRepository subjectRepository;
@@ -79,5 +88,39 @@ public class UCSBSubjectController extends ApiController {
         subject.setInactive(inactive);
 
         return subjectRepository.save(subject);
+    }
+
+    @ApiOperation(value = "Delete a subject")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @DeleteMapping("")
+    public ResponseEntity<String> deleteUCSBSubject (
+            @ApiParam("id") @RequestParam Long id) {
+        loggingService.logMethod();
+
+        UCSBSubjectOrError soe = new UCSBSubjectOrError(id);
+
+        soe = doesSubjectExist(soe);
+        if (soe.error != null) {
+            return soe.error;
+        }
+
+        subjectRepository.deleteById(id);
+
+        return ResponseEntity.ok().body(String.format("subject with id %d deleted", id));
+
+    }
+
+    public UCSBSubjectOrError doesSubjectExist(UCSBSubjectOrError soe) {
+
+        Optional<UCSBSubject> optionalSubject = subjectRepository.findById(soe.id);
+
+        if (optionalSubject.isEmpty()) {
+            soe.error = ResponseEntity
+                    .badRequest()
+                    .body(String.format("subject with id %d not found", soe.id));
+        } else {
+            soe.subject = optionalSubject.get();
+        }
+        return soe;
     }
 }
