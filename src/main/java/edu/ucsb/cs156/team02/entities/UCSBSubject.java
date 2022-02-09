@@ -16,7 +16,7 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity(name = "ucsb_subects")
+@Entity(name = "ucsb_subjects")
 public class UCSBSubject {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,10 +33,5 @@ public class UCSBSubject {
     private String collegeCode;
     private String relatedDeptCode;
     private boolean inactive;
-    private boolean done;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
 
 }
