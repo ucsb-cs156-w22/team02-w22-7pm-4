@@ -148,7 +148,6 @@ public class CollegiateSubredditController extends ApiController{
 
         return ResponseEntity.ok().body(body);
     }
-
     @ApiOperation(value = "Delete a collegiateSubreddit owned by this user")
     @PreAuthorize("hasRole('ROLE_USER')")
     @DeleteMapping("")
@@ -167,5 +166,7 @@ public class CollegiateSubredditController extends ApiController{
         return ResponseEntity.ok().body(String.format("CollegiateSubreddit with id %d deleted", id));
 
     }
+
+
     
 }
