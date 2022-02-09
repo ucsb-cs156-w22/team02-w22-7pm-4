@@ -74,8 +74,7 @@ class UCSBSubjectControllerTest extends ControllerTestCase {
         UCSBSubject subject2 = UCSBSubject.builder().subjectCode("Subject 2").subjectTranslation("Translation 2").deptCode("Dept code 2").collegeCode("College code 2").relatedDeptCode("Related dept code 2").inactive(false).id(1L).build();
         UCSBSubject subject3 = UCSBSubject.builder().subjectCode("Subject 3").subjectTranslation("Translation 3").deptCode("Dept code 3").collegeCode("College code 3").relatedDeptCode("Related dept code 3").inactive(false).id(1L).build();
 
-        ArrayList<UCSBSubject> expectedSubjects = new ArrayList<>();
-        expectedSubjects.addAll(Arrays.asList(subject1, subject2, subject3));
+        ArrayList<UCSBSubject> expectedSubjects = new ArrayList<>(Arrays.asList(subject1, subject2, subject3));
 
         when(subjectRepository.findAll()).thenReturn(expectedSubjects);
 
