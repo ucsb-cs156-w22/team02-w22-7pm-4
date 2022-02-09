@@ -115,15 +115,48 @@ public class CollegiateSubredditController extends ApiController{
     }
 
 
-    /*
-    @ApiOperation(value = "List this user's CollegiateSubreddit")
+    @ApiOperation(value = "Update a single collegiateSubreddit")
     @PreAuthorize("hasRole('ROLE_USER')")
-    @GetMapping("/all")
-    public Iterable<CollegiateSubreddit> thisUsersTodos() {
+    @PutMapping("")
+    public ResponseEntity<String> putCollegiateSubredditById(
+            @ApiParam("id") @RequestParam Long id,
+            @RequestBody @Valid CollegiateSubreddit incomingTodo) throws JsonProcessingException {
         loggingService.logMethod();
-        CurrentUser currentUser = getCurrentUser();
-        Iterable<CollegiateSubreddit> todos = CollegiateSubredditRepository.findAllByUserId(currentUser.getUser().getId());
-        return todos;
-    }*/
+
+        //CurrentUser currentUser = getCurrentUser();
+        //User user = currentUser.getUser();
+
+        CollegiateSubredditOrError toe = new CollegiateSubredditOrError(id);
+
+        toe = doesCollegiateSubredditExist(toe);
+        if (toe.error != null) {
+            return toe.error;
+        }
+
+        //incomingTodo.setUser(user);
+        collegiateSubredditRepository.save(incomingTodo);
+
+        String body = mapper.writeValueAsString(incomingTodo);
+        return ResponseEntity.ok().body(body);
+    }
+
+    @ApiOperation(value = "Delete a collegiateSubreddit owned by this user")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @DeleteMapping("")
+    public ResponseEntity<String> deleteCollegiateSubreddit(
+            @ApiParam("id") @RequestParam Long id) {
+        loggingService.logMethod();
+
+        CollegiateSubredditOrError toe = new CollegiateSubredditOrError(id);
+
+        toe = doesCollegiateSubredditExist(toe);
+        if (toe.error != null) {
+            return toe.error;
+        }
+
+        collegiateSubredditRepository.deleteById(id);
+        return ResponseEntity.ok().body(String.format("CollegiateSubreddit with id %d deleted", id));
+
+    }
     
 }
