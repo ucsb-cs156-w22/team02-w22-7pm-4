@@ -132,4 +132,233 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
         String responseString = response.getResponse().getContentAsString();
         assertEquals(expectedJson, responseString);
     }
+
+    // get a single req
+
+    @Test
+    public void api_requirements__does_get() throws Exception
+    {
+        mockMvc.perform(get("/api/UCSBRequirements?id=0"))
+            .andExpect(status().is(403));
+    }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void api_requirements_get__does_exist() throws Exception {
+
+        // arrange
+
+        User u = currentUserService.getCurrentUser().getUser();
+        UCSBRequirement u1 = UCSBRequirement.builder()
+                .id(7L)
+                .courseCount(2)
+                .unit(3)
+                .inactive(true)
+                .requirementCode("Test")
+                .requirementTranslation("Test")
+                .collegeCode("Test")
+                .objCode("Test")
+                .build();        
+        when(repo.findById(eq(7L))).thenReturn(Optional.of(u1));
+
+        // act
+        MvcResult response = mockMvc.perform(get("/api/UCSBRequirements?id=7"))
+                .andExpect(status().isOk()).andReturn();
+
+        // assert
+
+        verify(repo, times(1)).findById(eq(7L));
+        String expectedJson = mapper.writeValueAsString(u1);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedJson, responseString);
+    }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void api_requirements_get__does_not_exist() throws Exception {
+
+        // arrange
+
+        User u = currentUserService.getCurrentUser().getUser();
+
+        when(repo.findById(eq(7L))).thenReturn(Optional.empty());
+
+        // act
+        MvcResult response = mockMvc.perform(get("/api/UCSBRequirements?id=7"))
+                .andExpect(status().isBadRequest()).andReturn();
+
+        // assert
+
+        verify(repo, times(1)).findById(eq(7L));
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("id 7 not found", responseString);
+    }
+
+    // put 
+
+    @Test
+    public void api_requirements_does_put() throws Exception
+    {
+        UCSBRequirement u1 = UCSBRequirement.builder()
+                .id(7L)
+                .courseCount(2)
+                .unit(3)
+                .inactive(true)
+                .requirementCode("Test")
+                .requirementTranslation("Test")
+                .collegeCode("Test")
+                .objCode("Test")
+                .build();       
+
+        String requestBody = mapper.writeValueAsString(u1);
+
+        mockMvc.perform(
+            put("/api/UCSBRequirements?id=0")
+            .contentType(MediaType.APPLICATION_JSON)
+            .characterEncoding("utf-8")
+            .content(requestBody)
+            .with(csrf()) 
+        )
+        .andExpect(status().is(403));
+    }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void api_requirements__user_logged_in__put() throws Exception {
+        // arrange
+
+        User u = currentUserService.getCurrentUser().getUser();
+        UCSBRequirement u1 = UCSBRequirement.builder()
+                .id(7L)
+                .courseCount(2)
+                .unit(3)
+                .inactive(true)
+                .requirementCode("Test")
+                .requirementTranslation("Test")
+                .collegeCode("Test")
+                .objCode("Test")
+                .build(); 
+                       
+        UCSBRequirement u2 = UCSBRequirement.builder()
+                .id(6L)
+                .courseCount(1)
+                .unit(6) //edited
+                .inactive(false)
+                .requirementCode("Test edit")
+                .requirementTranslation("Test edit")
+                .collegeCode("Test edit")
+                .objCode("Test edit")
+                .build();  
+        
+        String requestBody = mapper.writeValueAsString(u2);
+        u2.setId(7L);
+        String expectedReturn = mapper.writeValueAsString(u2);
+        when(repo.findById(eq(7L))).thenReturn(Optional.of(u1));
+        when(repo.save(eq(u2))).thenReturn(u2);
+        // act
+        MvcResult response = mockMvc.perform(
+                put("/api/UCSBRequirements?id=7")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("utf-8")
+                        .content(requestBody)
+                        .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+
+        // assert
+
+        verify(repo, times(1)).findById(7L);
+        verify(repo, times(1)).save(u2); // should be saved with correct 
+        String responseString = response.getResponse().getContentAsString();
+        
+        assertEquals(expectedReturn, responseString);
+    }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void api_requirements__cannot_put_that_does_not_exist() throws Exception {
+        // arrange
+        UCSBRequirement u1 = UCSBRequirement.builder()
+                .id(7L)
+                .courseCount(2)
+                .unit(3)
+                .inactive(true)
+                .requirementCode("Test")
+                .requirementTranslation("Test")
+                .collegeCode("Test")
+                .objCode("Test")
+                .build(); 
+                       
+        String requestBody = mapper.writeValueAsString(u1);
+
+        when(repo.findById(eq(7L))).thenReturn(Optional.empty());
+
+        // act
+        MvcResult response = mockMvc.perform(
+                put("/api/UCSBRequirements?id=7")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("utf-8")
+                        .content(requestBody)
+                        .with(csrf()))
+                .andExpect(status().isBadRequest()).andReturn();
+
+        // assert
+        verify(repo, times(1)).findById(7L);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("id 7 not found", responseString);
+    }
+
+    // delete
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void api_requirements__user_logged_in__delete_todo() throws Exception {
+        // arrange
+        UCSBRequirement req1 = UCSBRequirement.builder()
+                .id(7L)
+                .courseCount(2)
+                .unit(3)
+                .inactive(true)
+                .requirementCode("Test")
+                .requirementTranslation("Test")
+                .collegeCode("Test")
+                .objCode("Test")
+                .build(); 
+        when(repo.findById(eq(7L))).thenReturn(Optional.of(req1));
+        // act
+        MvcResult response = mockMvc.perform(
+                delete("/api/UCSBRequirements?id=7")
+                        .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+        // assert
+        verify(repo, times(1)).findById(7L);
+        verify(repo, times(1)).deleteById(7L);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("record 7 deleted", responseString);
+    }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void api_requirements__user_logged_in__delete_todo_that_does_not_exist() throws Exception {
+        // arrange
+        UCSBRequirement req1 = UCSBRequirement.builder()
+                .id(7L)
+                .courseCount(2)
+                .unit(3)
+                .inactive(true)
+                .requirementCode("Test")
+                .requirementTranslation("Test")
+                .collegeCode("Test")
+                .objCode("Test")
+                .build(); 
+        when(repo.findById(eq(7L))).thenReturn(Optional.empty());
+        // act
+        MvcResult response = mockMvc.perform(
+                delete("/api/UCSBRequirements?id=7")
+                        .with(csrf()))
+                .andExpect(status().isBadRequest()).andReturn();
+        // assert
+        verify(repo, times(1)).findById(7L);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("record 7 not found", responseString);
+    }
 }
