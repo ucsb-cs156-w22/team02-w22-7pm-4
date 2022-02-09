@@ -1,5 +1,6 @@
 package edu.ucsb.cs156.team02.controllers;
 
+import edu.ucsb.cs156.team02.entities.Todo;
 import edu.ucsb.cs156.team02.entities.UCSBSubject;
 import edu.ucsb.cs156.team02.entities.User;
 import edu.ucsb.cs156.team02.models.CurrentUser;
@@ -66,6 +67,24 @@ public class UCSBSubjectController extends ApiController {
         return subjectRepository.findAll();
     }
 
+    @ApiOperation(value = "Get a single subject")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("")
+    public ResponseEntity<String> getSubjectByID(
+            @ApiParam("id") @RequestParam Long id) throws JsonProcessingException {
+        loggingService.logMethod();
+
+        UCSBSubjectController.UCSBSubjectOrError soe = new UCSBSubjectController.UCSBSubjectOrError(id);
+
+        soe = doesSubjectExist(soe);
+        if (soe.error != null) {
+            return soe.error;
+        }
+
+        String body = mapper.writeValueAsString(soe.subject);
+        return ResponseEntity.ok().body(body);
+    }
+
     @ApiOperation(value = "Create a new UCSBSubject")
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/post")
@@ -108,6 +127,33 @@ public class UCSBSubjectController extends ApiController {
 
         return ResponseEntity.ok().body(String.format("subject with id %d deleted", id));
 
+    }
+
+    @ApiOperation(value = "Update a single subject")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PutMapping("")
+    public ResponseEntity<String> putSubjectById(
+            @ApiParam("id") @RequestParam Long id,
+            @RequestBody @Valid UCSBSubject incomingSubject) throws JsonProcessingException {
+        loggingService.logMethod();
+
+        UCSBSubjectOrError soe = new UCSBSubjectOrError(id);
+
+        soe = doesSubjectExist(soe);
+        if (soe.error != null) {
+            return soe.error;
+        }
+        soe = doesSubjectExist(soe);
+        if (soe.error != null) {
+            return soe.error;
+        }
+
+        incomingSubject.setId(id);
+
+        subjectRepository.save(incomingSubject);
+
+        String body = mapper.writeValueAsString(incomingSubject);
+        return ResponseEntity.ok().body(body);
     }
 
     public UCSBSubjectOrError doesSubjectExist(UCSBSubjectOrError soe) {
