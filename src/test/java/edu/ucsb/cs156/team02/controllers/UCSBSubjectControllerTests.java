@@ -1,5 +1,7 @@
 package edu.ucsb.cs156.team02.controllers;
 
+import edu.ucsb.cs156.team02.entities.Todo;
+import edu.ucsb.cs156.team02.entities.User;
 import edu.ucsb.cs156.team02.repositories.UserRepository;
 import edu.ucsb.cs156.team02.testconfig.TestConfig;
 import edu.ucsb.cs156.team02.ControllerTestCase;
@@ -10,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -222,5 +225,91 @@ class UCSBSubjectControllerTests extends ControllerTestCase {
         verify(subjectRepository, times(1)).findById(eq(29L));
         String responseString = response.getResponse().getContentAsString();
         assertEquals("subject with id 29 not found", responseString);
+    }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void api_user_logged_in__put_subject() throws Exception {
+        // arrange
+
+        UCSBSubject subject1 = UCSBSubject.builder().subjectCode("Old Code")
+                .subjectTranslation("Old Translation")
+                .deptCode("Old dept code")
+                .collegeCode("Old college code")
+                .relatedDeptCode("Old related dept code")
+                .inactive(false)
+                .id(77L)
+                .build();
+
+        UCSBSubject updatedSubject = UCSBSubject.builder().subjectCode("New Code")
+                .subjectTranslation("New Translation")
+                .deptCode("New dept code")
+                .collegeCode("New college code")
+                .relatedDeptCode("New related dept code")
+                .inactive(false)
+                .id(77L)
+                .build();
+
+        UCSBSubject correctSubject = UCSBSubject.builder().subjectCode("New Code")
+                .subjectTranslation("New Translation")
+                .deptCode("New dept code")
+                .collegeCode("New college code")
+                .relatedDeptCode("New related dept code")
+                .inactive(false)
+                .id(77L)
+                .build();
+
+        String requestBody = mapper.writeValueAsString(updatedSubject);
+        String expectedJson = mapper.writeValueAsString(correctSubject);
+
+        when(subjectRepository.findById(eq(77L))).thenReturn(Optional.of(subject1));
+
+        // act
+        MvcResult response = mockMvc.perform(
+                        put("/api/UCSBSubjects?id=77")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .characterEncoding("utf-8")
+                                .content(requestBody)
+                                .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+
+        // assert
+        verify(subjectRepository, times(1)).findById(77L);
+        verify(subjectRepository, times(1)).save(correctSubject);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedJson, responseString);
+    }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void api_subject__user_logged_in__cannot_put_subject_that_does_not_exist() throws Exception {
+        // arrange
+
+        UCSBSubject updatedSubject = UCSBSubject.builder().subjectCode("New Code")
+                .subjectTranslation("New Translation")
+                .deptCode("New dept code")
+                .collegeCode("New college code")
+                .relatedDeptCode("New related dept code")
+                .inactive(false)
+                .id(77L)
+                .build();
+
+        String requestBody = mapper.writeValueAsString(updatedSubject);
+
+        when(subjectRepository.findById(eq(77L))).thenReturn(Optional.empty());
+
+        // act
+        MvcResult response = mockMvc.perform(
+                        put("/api/UCSBSubjects?id=77")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .characterEncoding("utf-8")
+                                .content(requestBody)
+                                .with(csrf()))
+                .andExpect(status().isBadRequest()).andReturn();
+
+        // assert
+        verify(subjectRepository, times(1)).findById(77L);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("subject with id 77 not found", responseString);
     }
 }

@@ -143,12 +143,6 @@ public class UCSBSubjectController extends ApiController {
         if (soe.error != null) {
             return soe.error;
         }
-        soe = doesSubjectExist(soe);
-        if (soe.error != null) {
-            return soe.error;
-        }
-
-        incomingSubject.setId(id);
 
         subjectRepository.save(incomingSubject);
 
