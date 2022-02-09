@@ -120,7 +120,7 @@ public class CollegiateSubredditController extends ApiController{
     @PutMapping("")
     public ResponseEntity<String> putCollegiateSubredditById(
             @ApiParam("id") @RequestParam Long id,
-            @RequestBody @Valid CollegiateSubreddit incomingTodo) throws JsonProcessingException {
+            @RequestBody @Valid CollegiateSubreddit incomingCollegiateSubreddit) throws JsonProcessingException {
         loggingService.logMethod();
 
         //CurrentUser currentUser = getCurrentUser();
@@ -139,9 +139,9 @@ public class CollegiateSubredditController extends ApiController{
         //String body = mapper.writeValueAsString(incomingTodo);
 
         CollegiateSubreddit oldTodo = toe.todo;
-        oldTodo.setName(incomingTodo.getName());
-        oldTodo.setLocation(incomingTodo.getLocation());
-        oldTodo.setSubreddit(incomingTodo.getSubreddit());
+        oldTodo.setName(incomingCollegiateSubreddit.getName());
+        oldTodo.setLocation(incomingCollegiateSubreddit.getLocation());
+        oldTodo.setSubreddit(incomingCollegiateSubreddit.getSubreddit());
 
         collegiateSubredditRepository.save(oldTodo);
         String body = mapper.writeValueAsString(oldTodo);
